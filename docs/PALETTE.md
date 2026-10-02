@@ -1,16 +1,13 @@
 # Palette provenance
 
-Every value in `client.js` comes from
-[Everforest](https://github.com/sainnhe/everforest) by sainnhe, MIT licensed.
+Every value in `client.js` comes from [Everforest](https://github.com/sainnhe/everforest) by sainnhe, MIT licensed.
 
 | Source | Used for |
 | --- | --- |
-| [`autoload/everforest.vim`](https://github.com/sainnhe/everforest/blob/master/autoload/everforest.vim) → `everforest#get_palette(background, colors_override)` | the six planes (accent + background tables below) |
+| [`autoload/everforest.vim`](https://github.com/sainnhe/everforest/blob/master/autoload/everforest.vim) → `everforest#get_palette(background, colors_override)` | the six planes (accent and background tables below) |
 | [`colors/everforest.vim`](https://github.com/sainnhe/everforest/blob/master/colors/everforest.vim) | the syntax mapping in `docs/MAPPING.md` (`Comment`, `String`, `Function`, `Keyword`, `Constant`, `Number`, `Type`, `Special`, `Operator`, `Identifier`, `Label`, `Title`) |
 
-Upstream exposes the background as `hard` / `medium` / `soft` crossed with
-Vim's `&background` (`dark` / `light`), which is exactly the six palettes this
-pack ships.
+Upstream exposes the background as `hard`, `medium` or `soft` crossed with Vim’s `&background` (`dark` or `light`), which is exactly the six palettes this pack ships.
 
 ## Accent planes
 
@@ -35,8 +32,7 @@ Shared by the three depths within one scheme.
 
 ## Background planes
 
-Column order: `bg_dim, bg0, bg1, bg2, bg3, bg4, bg5` then
-`bg_visual, bg_red, bg_yellow, bg_green, bg_blue, bg_purple`.
+The columns run `bg_dim, bg0, bg1, bg2, bg3, bg4, bg5`, then `bg_visual, bg_red, bg_yellow, bg_green, bg_blue, bg_purple`.
 
 | plane | bg_dim … bg5 | visual … purple |
 | --- | --- | --- |
@@ -47,13 +43,13 @@ Column order: `bg_dim, bg0, bg1, bg2, bg3, bg4, bg5` then
 | light-medium | `#efebd4` `#fdf6e3` `#f4f0d9` `#efebd4` `#e6e2cc` `#e0dcc7` `#bdc3af` | `#eaedc8` `#fde3da` `#faedcd` `#f0f1d2` `#e9f0e9` `#fae8e2` |
 | light-soft | `#e5dfc5` `#f3ead3` `#eae4ca` `#e5dfc5` `#ddd8be` `#d8d3ba` `#b9c0ab` | `#e1e4bd` `#fadbd0` `#f1e4c5` `#e5e6c5` `#e1e7dd` `#f1ddd4` |
 
-In both schemes a higher `bg` index is further from the base surface (lighter
-in the dark planes, darker in the light planes), so the mapping table in
-`MAPPING.md` uses slot names only and serves all six palettes.
+In both schemes a higher `bg` index is further from the base surface (lighter in the dark planes, darker in the light planes), so the mapping table in `MAPPING.md` uses slot names only and serves all six palettes.
 
 ## Upstream license
 
-```
+Upstream Everforest ships under the MIT license:
+
+```text
 Copyright (c) 2019 sainnhe
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -67,4 +63,4 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 ```
 
-The full text is reproduced in `LICENSE`.
+`LICENSE` carries the full text.

@@ -1,10 +1,8 @@
 # Token mapping
 
-How the six Everforest planes become Harness theme tokens. The authoritative
-implementation is `client.js`; the tables here record the rules and the
-reasoning so the mapping can be reviewed or re-derived.
+How the six Everforest planes become Harness theme tokens. The authoritative implementation is `client.js`; the tables here record the rules and the reasoning, so you can review or re-derive the mapping.
 
-## Mechanism
+## How the layer reaches the page
 
 `client.js` calls
 
@@ -12,21 +10,15 @@ reasoning so the mapping can be reviewed or re-derived.
 ctx.theme.overrideTokens('@local/dsh-theme-everforest', buildLayer(depth))
 ```
 
-`buildLayer` evaluates one rule per token against both schemes and returns the
-`{ light, dark }` pair shape the theme service requires. `ThemeRuntime`
-composes that layer over whichever theme is active, picks the value for the
-resolved colour scheme, and the layout presenter writes the result as inline
-custom properties on `document.body` — which is why plain `--dsw-static-*`
-tokens can be themed alongside the `--dsw-alias-*` layer.
+`buildLayer` evaluates one rule per token against both schemes and returns the `{ light, dark }` pair shape the theme service requires. `ThemeRuntime` composes that layer over whichever theme is active, picks the value for the resolved color scheme, and the layout presenter writes the result as inline custom properties on `document.body`. That is why the layer also reaches plain `--dsw-static-*` tokens, not only the `--dsw-alias-*` layer.
 
-Coverage is checked, not asserted: `node tools/check.mjs` compares the keys of
-`buildLayer('medium')` against `tools/base-tokens.json` and fails on both
-missing and stray keys (154 tokens).
+`node tools/check.mjs` enforces coverage: it compares the keys of `buildLayer('medium')` against `tools/base-tokens.json` and fails on missing and stray keys (154 tokens).
 
 ## Rule groups
 
-`alpha(color, a)` → `rgba()`, `mix(a, b, t)` → sRGB hex blend, `tone(p, w)` →
-`mix(fg, bg0, TEXT_WEIGHTS[scheme][w])`.
+Each rule takes one palette plane and returns one value, built from three helpers:
+
+`alpha(color, a)` returns `rgba()`, `mix(a, b, t)` blends two colors into sRGB hex, and `tone(p, w)` returns `mix(fg, bg0, TEXT_WEIGHTS[scheme][w])`.
 
 | Group | Rule |
 | --- | --- |
@@ -53,11 +45,13 @@ missing and stray keys (154 tokens).
 
 ### Text ladder
 
+Label tokens mix the foreground towards the base surface rather than using Everforest’s comment grey:
+
 | Token | Value |
 | --- | --- |
 | `label-primary` | `fg` |
-| `label-secondary` | `tone(secondary)` — `mix(fg,bg0, .12)` light, `.20` dark |
-| `label-tertiary`, `label-caption` | `tone(tertiary)` — `.30` light, `.38` dark |
+| `label-secondary` | `tone(secondary)`, or `mix(fg,bg0, .12)` light and `.20` dark |
+| `label-tertiary`, `label-caption` | `tone(tertiary)`, or `.30` light and `.38` dark |
 | `label-primary-dimmed` | `.30` light, `.25` dark |
 | `label-dimmed` | `.55` light, `.60` dark |
 | `menu-icon` | `.15` both |
@@ -67,48 +61,33 @@ missing and stray keys (154 tokens).
 
 ## Deliberate deviations from upstream
 
-1. **`brandFill` for the light planes.** Upstream paints cream (`bg0`) on the
-   raw light green `#8da101`, which measures 2.7:1 — below any usable button
-   label contrast. The light planes therefore deepen the green by 18 %
-   (`#748400`) for `brand-primary` and `button-primary-fill` only; the dark
-   planes, syntax colours, state colours and sidebar accent keep the exact
-   upstream green.
-2. **`tone()` instead of `grey1` for UI labels.** Everforest's `grey1` is a
-   comment colour: 2.6:1 on the light base. UI labels use a controlled mix
-   towards the base surface instead, so every palette clears its thresholds,
-   while syntax comments keep the authentic `grey1`.
-3. **Static patch.** Only the `--dsw-static-*` names that components actually
-   read through `var()` are mapped (harvested by `tools/check.mjs --extract`);
-   the rest of the static ramp is left alone, because every alias that used it
-   is mapped directly. `neutral-00` / `neutral-bluish-00` stay white: their
-   consumers use them as a translucent white highlight, and tinting them would
-   invert that intent in the light planes.
-4. **Untouched properties.** `--dsw-focus-ring-color` (default `transparent`;
-   mapping it would change focus behaviour), shadows, radii, fonts, and
-   `--dsw-mask-blur` / `--dsw-menu-backdrop-filter`.
+Four places depart from upstream Everforest, each for legibility:
+
+1. **`brandFill` for the light planes**: Upstream paints cream (`bg0`) on the raw light green `#8da101`, which measures 2.7:1 and sits below any usable button label contrast. The light planes therefore deepen the green by 18 % (`#748400`) for `brand-primary` and `button-primary-fill` only. The dark planes, syntax colors, state colors and sidebar accent keep the exact upstream green.
+2. **`tone()` instead of `grey1` for labels**: Everforest’s `grey1` is a comment color at 2.6:1 on the light base. Labels mix the foreground towards the base surface instead, so every palette clears its thresholds, while syntax comments keep the authentic `grey1`.
+3. **Static patch**: The mapping covers only the `--dsw-static-*` names that components read through `var()` (harvested by `tools/check.mjs --extract`), because the rule table maps every alias built on the rest directly. `neutral-00` and `neutral-bluish-00` stay white: their consumers use them as a translucent white highlight, and tinting them would invert that intent in the light planes.
+4. **Untouched properties**: `--dsw-focus-ring-color` (default `transparent`, and mapping it would change focus behavior), shadows, radii, fonts, `--dsw-mask-blur` and `--dsw-menu-backdrop-filter` all stay as they are.
 
 ## Contrast thresholds
 
-`node tools/check.mjs` prints the measured ratios and fails the build below
-these values:
+`node tools/check.mjs` prints the measured ratios and fails the build below these values:
 
 | Pair | Minimum | Rationale |
 | --- | --- | --- |
-| `label-primary` on `bg-base` | 4.5 | body text, WCAG AA |
-| `label-primary` on `bg-layer-2` | 4.0 | raised surfaces; Everforest's light-soft plane ships ~4.2:1 upstream |
-| `label-primary` on `specific-sidebar-fill` | 4.0 | same palette limit |
+| `label-primary` on `bg-base` | 4.5 | body text, the WCAG (Web Content Accessibility Guidelines) AA threshold |
+| `label-primary` on `bg-layer-2` | 4.0 | raised surfaces; Everforest’s light-soft plane measures 4.17:1 upstream |
+| `label-primary` on `specific-sidebar-fill` | 4.0 | the same palette limit |
 | `label-secondary` on `bg-base` | 3.5 | secondary text |
-| `label-tertiary` / `label-caption` on `bg-base` | 2.5 | metadata labels |
+| `label-tertiary` and `label-caption` on `bg-base` | 2.5 | metadata labels |
 | `label-primary-foreground` on `brand-primary` | 3.0 | text on a primary button |
 
-Current measurements:
+The current measurements are:
 
-```
-palette       base     raised   sidebar  2nd      3rd      caption  on-brand
-light-hard    5.40     4.84     4.84     4.19     2.92     2.92     4.02
-dark-hard     8.15     6.20     9.39     5.83     4.11     4.11     6.88
-light-medium  5.18     4.66     4.66     4.04     2.87     2.87     3.86
-dark-medium   7.38     5.57     8.62     5.34     3.86     3.86     6.23
-light-soft    4.66     4.17     4.17     3.73     2.72     2.72     3.47
-dark-soft     6.65     4.99     7.83     4.87     3.61     3.61     5.62
-```
+| Palette | Base | Raised | Sidebar | Secondary | Tertiary | Caption | On brand |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| light-hard | 5.40 | 4.84 | 4.84 | 4.19 | 2.92 | 2.92 | 4.02 |
+| dark-hard | 8.15 | 6.20 | 9.39 | 5.83 | 4.11 | 4.11 | 6.88 |
+| light-medium | 5.18 | 4.66 | 4.66 | 4.04 | 2.87 | 2.87 | 3.86 |
+| dark-medium | 7.38 | 5.57 | 8.62 | 5.34 | 3.86 | 3.86 | 6.23 |
+| light-soft | 4.66 | 4.17 | 4.17 | 3.73 | 2.72 | 2.72 | 3.47 |
+| dark-soft | 6.65 | 4.99 | 7.83 | 4.87 | 3.61 | 3.61 | 5.62 |
