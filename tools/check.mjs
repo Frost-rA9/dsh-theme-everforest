@@ -7,7 +7,7 @@
  *   2. that `client.js` exposes its generator (loaded with a shimmed `window`,
  *      so no browser and no DSH runtime is needed),
  *   3. token coverage against the vendored base token list,
- *   4. that every generated value is a plausible CSS colour / gradient,
+ *   4. that every generated value is a plausible CSS color / gradient,
  *   5. WCAG contrast on the surfaces that carry text.
  *
  * Usage:
@@ -86,7 +86,7 @@ function extract(themeDir) {
 }
 
 // ---------------------------------------------------------------------------
-// colour maths
+// color maths
 // ---------------------------------------------------------------------------
 
 function parseColor(value) {
@@ -192,13 +192,13 @@ function checkValues(generator, base) {
             bad += 1
           }
         } else if (value !== 'transparent' && !parseColor(value)) {
-          fail(`${depth}/${scheme} ${name} is not a colour: ${value}`)
+          fail(`${depth}/${scheme} ${name} is not a color: ${value}`)
           bad += 1
         }
       }
     }
   }
-  if (!bad) pass(`all values across ${generator.DEPTHS.length} depths are valid CSS colours/gradients`)
+  if (!bad) pass(`all values across ${generator.DEPTHS.length} depths are valid CSS colors/gradients`)
 }
 
 function checkContrast(generator) {

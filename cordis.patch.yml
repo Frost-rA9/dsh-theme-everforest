@@ -1,5 +1,5 @@
 # Everforest theme pack: one row, whose Client half owns the palette layer and
-# the Settings → General row. The Host half has no behaviour of its own.
+# the Settings → General row. The Host half has no behavior of its own.
 - insert:
     - id: everforest-theme
       name: '@local/dsh-theme-everforest'

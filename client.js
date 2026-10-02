@@ -1,12 +1,12 @@
 /**
- * Everforest theme pack for the Harness Web UI — browser half.
+ * Everforest theme pack for the Harness web interface: browser half.
  *
- * The pack is a token *layer*, not a registered theme: it calls
+ * The pack is a token *layer*, not a registered theme. It calls
  * `ctx.theme.overrideTokens(source, tokens)` with a `{ light, dark }` value for
- * every colour token the Harness base sheets define, so the host's own
+ * every color token the Harness base sheets define, so the host's own
  * light/dark/system preference keeps deciding which half paints. That keeps all
- * six Everforest palettes — hard, medium and soft depth, each in a light and a
- * dark plane — reachable while the Appearance row stays authoritative.
+ * six Everforest palettes (hard, medium and soft depth, each in a light and a
+ * dark plane) reachable while the Appearance row stays authoritative.
  *
  * It renders its own preference row into `settings.general.item` (the theme
  * feature owns its settings surface) and persists the chosen depth in
@@ -17,9 +17,9 @@
  * `autoload/everforest.vim` (`everforest#get_palette`) and `colors/everforest.vim`
  * (syntax groups). See docs/PALETTE.md.
  *
- * The module is one self-contained script — the client module system loads a
- * bundle without allowing a synchronous relative require — and it can be
- * `import`ed by tools/check.mjs with a shimmed `window`, which is what the
+ * The module is one self-contained script, because the client module system
+ * loads a bundle without allowing a synchronous relative require. tools/check.mjs
+ * can also `import` it with a shimmed `window`, which is what the
  * `window.__DSH_EVERFOREST__` handle below is for.
  */
 ;(function () {
@@ -64,9 +64,9 @@
   /**
    * Background plane per depth and scheme, ordered:
    * bg_dim, bg0..bg5, bg_visual, bg_red, bg_yellow, bg_green, bg_blue, bg_purple.
-   * A higher `bg` index always means "further from the base surface" — lighter
-   * in the dark planes, darker in the light planes — so one rule table serves
-   * both schemes.
+   * A higher `bg` index always means "further from the base surface": lighter
+   * in the dark planes, darker in the light planes. One rule table therefore
+   * serves both schemes.
    */
   var BG_SLOTS = [
     'bg_dim', 'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5',
@@ -111,7 +111,7 @@
     }
   }
 
-  // #region colour helpers ---------------------------------------------------
+  // #region color helpers ---------------------------------------------------
 
   function channels(value) {
     var hex = /^#([0-9a-f]{6})$/i.exec(value)
@@ -125,7 +125,7 @@
     }).join('')
   }
 
-  /** Translucent form of an opaque palette colour. */
+  /** Translucent form of an opaque palette color. */
   function alpha(color, opacity) {
     var rgb = channels(color)
     return 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + opacity + ')'
@@ -162,7 +162,7 @@
   // #region token rules ------------------------------------------------------
 
   /* token-map:start */
-  /** Base-sheet colour tokens: alias layer, specific layer, and themed chrome. */
+  /** Base-sheet color tokens: alias layer, specific layer, and themed chrome. */
   var TOKEN_RULES = {
     // surfaces
     '--dsw-alias-bg-base': function (p) { return p.bg0 },
@@ -302,7 +302,7 @@
   /* token-map:end */
 
   /* shiki-map:start */
-  /** Syntax colours, following `colors/everforest.vim`'s highlight groups. */
+  /** Syntax colors, following `colors/everforest.vim`'s highlight groups. */
   var SHIKI_RULES = {
     '--shiki-foreground': function (p) { return p.fg },
     '--shiki-background': function (p) { return p.bg_dim },
